@@ -14,10 +14,12 @@ public class AsistenciasServiceImpl implements AsistenciasService {
 
     @Autowired
     private AsistenciasDao asistenciasDao;
+    private Asistencias asistencias;
 
 
     @Override
     public List<Asistencias> getAsistencias(){
+
         return (List<Asistencias>) asistenciasDao.findAll();
     }
 
@@ -29,13 +31,14 @@ public class AsistenciasServiceImpl implements AsistenciasService {
 
     @Override
     public Asistencias saveAsistencia(Asistencias asistencias){
+
         return asistenciasDao.save(asistencias);
     }
 
     @Override
     public Asistencias updateAsistencia(Long id){
         Asistencias nuevaAsistencia = getAsistenciaById(id);
-        nuevaAsistencia.setId(Asistencias.getId());
+        nuevaAsistencia.setId(asistencias.getId());
         return asistenciasDao.save(nuevaAsistencia);
     }
 
@@ -45,6 +48,6 @@ public class AsistenciasServiceImpl implements AsistenciasService {
             asistenciasDao.deleteById(id);
             return true;
         }
-        return false
+        return false;
     }
 }

@@ -9,5 +9,5 @@ public interface EmpleadoService {
     Empleados getEmpleadoById(Long id);
     Empleados saveEmpleado(Empleados empleados);
     Empleados updateEmpleado(Long id);
-    boolean deleteEmpledo(Long id);
+    boolean deleteEmpleado(Long id);
 }

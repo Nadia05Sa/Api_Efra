@@ -3,12 +3,13 @@ package mx.ed.utez.api_efra.service;
 import mx.ed.utez.api_efra.model.DAO.EmpleadosDao;
 import mx.ed.utez.api_efra.model.Empleados;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
+@Service
 public class EmpleadoServiceImpl  implements  EmpleadoService{
-
     @Autowired
     private EmpleadosDao empleadosDao;
     private Empleados empleados;

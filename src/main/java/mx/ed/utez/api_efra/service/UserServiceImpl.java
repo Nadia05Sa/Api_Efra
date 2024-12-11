@@ -1,15 +1,26 @@
 package mx.ed.utez.api_efra.service;
 
+import mx.ed.utez.api_efra.model.Asistencias;
 import mx.ed.utez.api_efra.model.DAO.UserDao;
 import mx.ed.utez.api_efra.model.Empleados;
 import mx.ed.utez.api_efra.model.User;
+import mx.ed.utez.api_efra.response.AsistenciasResponseRest;
+import mx.ed.utez.api_efra.response.UserResponseRest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 @Service
 public class UserServiceImpl implements UserService{
+
+    private static final Logger log = LoggerFactory.getLogger(AsistenciasServiceImpl.class);
 
     @Autowired
     private UserDao userDao;
@@ -45,5 +56,63 @@ public class UserServiceImpl implements UserService{
             return true;
         }
         return false;
+    }
+
+    @Override
+    @Transactional
+    public ResponseEntity<UserResponseRest> agregarUsuario(User user) {
+        log.info("Inicio metodo crear Usuario)");
+
+        UserResponseRest response = new UserResponseRest();
+        List<User> list = new ArrayList<>();
+
+        try {
+
+            User usuarioGuardar = userDao.save(user);
+
+            if(usuarioGuardar != null) {
+                list.add(usuarioGuardar);
+                response.getUserResponse().setUser(list);
+                response.setMetada("Respuesta OK", "00", "Creacion exitosa");
+            }else {
+                log.info("Usuario no creado");
+                response.setMetada("No Creado", "-1", "Usuario no creada");
+                return new ResponseEntity<UserResponseRest>(response, HttpStatus.BAD_REQUEST);
+            }
+        } catch (Exception e) {
+            response.setMetada("Error", "-1", "Error al guardar el usuario");
+            log.error("Error al guardar el usuario: ",e.getMessage());
+            e.getStackTrace();
+            return new ResponseEntity<UserResponseRest>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<UserResponseRest>(response, HttpStatus.OK);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public ResponseEntity<UserResponseRest> buscarUsuarioPorId(Long id) {
+        log.info("Inicio metodo buscarPorId)");
+
+        UserResponseRest response = new UserResponseRest();
+        List<User> list = new ArrayList<>();
+
+        try {
+            Optional<User> usuario = userDao.findById(id);
+            if (usuario.isPresent()) {
+                list.add(usuario.get());
+                response.getUserResponse().setUser(list);
+            } else {
+                log.error("Error en consultar usuario");
+                response.setMetada("Respuesta FALLIDA", "-1", "Usuario no encontrado");
+                return new ResponseEntity<UserResponseRest>(response, HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            log.error("Error en consultar usuario");
+            response.setMetada("Respuesta FALLIDA", "-1", "Error al consultar usuario");
+            return new ResponseEntity<UserResponseRest>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        response.setMetada("Respuesta ok", "00", "Respuesta exitosa");
+        return new ResponseEntity<UserResponseRest>(response, HttpStatus.OK); //devuelve 200
     }
 }

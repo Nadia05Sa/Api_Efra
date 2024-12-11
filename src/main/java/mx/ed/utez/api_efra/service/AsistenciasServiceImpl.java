@@ -64,17 +64,17 @@ public class AsistenciasServiceImpl implements AsistenciasService {
     @Override
     @Transactional
     public ResponseEntity<AsistenciasResponseRest> agregarAsistencia(Asistencias asistencias) {
-        log.info("Inicio metodo crear Agencia)");
+        log.info("Inicio metodo crear asistencia)");
 
         AsistenciasResponseRest response = new AsistenciasResponseRest();
         List<Asistencias> list = new ArrayList<>();
 
         try {
 
-            Asistencias agenciaGuardar = asistenciasDao.save(asistencias);
+            Asistencias asistenciaGuardar = asistenciasDao.save(asistencias);
 
-            if(agenciaGuardar != null) {
-                list.add(agenciaGuardar);
+            if(asistenciaGuardar != null) {
+                list.add(asistenciaGuardar);
                 response.getAsistenciasResponse().setAsistencias(list);
                 response.setMetada("Respuesta OK", "00", "Creacion exitosa");
             }else {

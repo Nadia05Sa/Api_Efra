@@ -3,9 +3,12 @@ import jakarta.persistence.*;
 
 
 import jakarta.persistence.*;
+
+import java.io.Serializable;
+
 @Entity
 @Table(name = "Empleados")
-public class Empleados {
+public class Empleados implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

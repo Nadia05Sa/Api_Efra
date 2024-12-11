@@ -5,11 +5,11 @@ import mx.ed.utez.api_efra.model.User;
 import java.util.List;
 
 public class UserResponse {
-    private List<User> asistencias;
-    public List<User> getAsistencias() {
-        return asistencias;
+    private List<User> user;
+    public List<User> getUser() {
+        return user;
     }
-    public void setAsistencias(List<User> user) {
-        this.asistencias = user;
+    public void setUser(List<User> user) {
+        this.user = user;
     }
 }

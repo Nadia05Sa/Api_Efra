@@ -2,12 +2,13 @@ package mx.ed.utez.api_efra.model;
 
 import jakarta.persistence.*;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
 @Table(name = "users")
-public class User {
+public class User implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,12 +35,6 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "authority_id") // Clave foránea hacia 'authorities'
     )
     private Set<Authority> authorities = new HashSet<>();  // Conjunto de roles asociados al usuario
-
-    public User(String correo, String nombre, String apellido) {
-        this.correo = correo;
-        Nombre = nombre;
-        Apellido = apellido;
-    }
 
     // Getters y Setters
     public Long getId() {

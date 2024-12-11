@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 public class EmpleadoServiceImpl  implements  EmpleadoService{
+
     @Autowired
     private EmpleadosDao empleadosDao;
     private Empleados empleados;
@@ -25,7 +26,7 @@ public class EmpleadoServiceImpl  implements  EmpleadoService{
 
     @Override
     public Empleados saveEmpleado(Empleados empleados){
-        return EmpleadosDao.save(empleados);
+        return empleadosDao.save(empleados);
     }
 
     @Override

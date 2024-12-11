@@ -17,4 +17,6 @@ public interface UserService {
 
     public ResponseEntity<UserResponseRest> agregarUsuario(User user);
     public ResponseEntity<UserResponseRest> buscarUsuarioPorId(Long id);
+    public ResponseEntity<UserResponseRest> actualizarUsuario(Long id, User request);
+    public ResponseEntity<UserResponseRest> eliminarUsuario(Long id);
 }

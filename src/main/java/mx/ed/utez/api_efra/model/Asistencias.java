@@ -3,7 +3,7 @@ import java.io.Serializable;
 import java.time.LocalTime;
 
 import jakarta.persistence.*;
-import org.springframework.data.annotation.Id;
+import jakarta.persistence.Id;  // Solo esta línea es necesaria
 
 @Entity
 @Table(name = "Asistencias")

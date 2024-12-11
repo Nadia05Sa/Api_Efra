@@ -15,13 +15,25 @@ public class UserRestController {
 
     @PostMapping("/usuarios/agregar")
     public ResponseEntity<UserResponseRest> agregarUsuario(@RequestBody User request){
-        ResponseEntity<UserResponseRest>  response = service.agregarUsuario(request);
+        ResponseEntity<UserResponseRest> response = service.agregarUsuario(request);
         return response;
     }
 
-    @GetMapping("/agencias/{id}")
+    @GetMapping("/usuarios/{id}")
     public ResponseEntity<UserResponseRest> buscarUsuarioPorId(@PathVariable Long id){
         ResponseEntity<UserResponseRest> response = service.buscarUsuarioPorId(id);
+        return response;
+    }
+
+    @PutMapping("/usuarios/actualizar/{id}")
+    public ResponseEntity<UserResponseRest> actualizarUsuario(@PathVariable Long id, @RequestBody User request){
+        ResponseEntity<UserResponseRest> response = service.actualizarUsuario(id, request);
+        return response;
+    }
+
+    @DeleteMapping("/usuarios/eliminar/{id}")
+    public ResponseEntity<UserResponseRest> eliminarUsuario(@PathVariable Long id){
+        ResponseEntity<UserResponseRest> response = service.eliminarUsuario(id);
         return response;
     }
 }

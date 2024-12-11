@@ -7,8 +7,9 @@ import org.springframework.data.repository.query.Param;
 
 public interface AsistenciasDaoC extends JpaRepository<Asistencias, Long> {
 
-    @Query("select c from Asistenciasc where c.maestro = :nombre")
+    @Query("select a from Asistencias a where a.user = :nombre")
     public Asistencias findByNombre(@Param("nombre") String nombre);
+
 
     // Para actualizar la foto, no es necesario usar una consulta JPQL, solo se usa save o saveAndFlush
     public Asistencias save(Asistencias foto);

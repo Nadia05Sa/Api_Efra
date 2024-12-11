@@ -14,5 +14,8 @@ public interface AsistenciasService {
     boolean deleteAsistencia(Long id);
 
     public ResponseEntity<AsistenciasResponseRest> agregarAsistencia(Asistencias asistencias);
+    public ResponseEntity<AsistenciasResponseRest> obtenerAsistenciaPorId(Long id);
+    public ResponseEntity<AsistenciasResponseRest> actualizarAsistencia(Long id, Asistencias request);
+    public ResponseEntity<AsistenciasResponseRest> eliminarAsistencia(Long id);
 
 }

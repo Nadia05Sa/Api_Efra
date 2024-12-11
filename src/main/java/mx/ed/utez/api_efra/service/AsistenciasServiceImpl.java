@@ -90,6 +90,88 @@ public class AsistenciasServiceImpl implements AsistenciasService {
         }
         return new ResponseEntity<AsistenciasResponseRest>(response, HttpStatus.OK);
     }
+    @Override
+    @Transactional(readOnly = true)
+    public ResponseEntity<AsistenciasResponseRest> obtenerAsistenciaPorId(Long id) {
+        log.info("Inicio metodo obtenerAsistenciaPorId");
 
+        AsistenciasResponseRest response = new AsistenciasResponseRest();
 
+        try {
+            Optional<Asistencias> asistencia = asistenciasDao.findById(id);
+            if (asistencia.isPresent()) {
+                response.getAsistenciasResponse().setAsistencias(List.of(asistencia.get()));
+            } else {
+                log.error("Asistencia no encontrada con id: {}", id);
+                response.setMetada("Respuesta FALLIDA", "-1", "Asistencia no encontrada");
+                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            log.error("Error al obtener asistencia por id", e);
+            response.setMetada("Respuesta FALLIDA", "-1", "Error al obtener asistencia por id");
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        response.setMetada("Respuesta OK", "00", "Asistencia obtenida con éxito");
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+    @Override
+    @Transactional
+    public ResponseEntity<AsistenciasResponseRest> actualizarAsistencia(Long id, Asistencias request) {
+        log.info("Inicio metodo actualizarAsistencia");
+
+        AsistenciasResponseRest response = new AsistenciasResponseRest();
+
+        try {
+            Optional<Asistencias> asistenciaExistente = asistenciasDao.findById(id);
+            if (asistenciaExistente.isPresent()) {
+                Asistencias asistencia = asistenciaExistente.get();
+                // Actualiza los campos necesarios
+                asistencia.setHoraEntrada(request.getHoraEntrada());
+                asistencia.setHoraSalida(request.getHoraSalida());
+
+                // Guardar asistencia actualizada
+                asistenciasDao.save(asistencia);
+
+                response.getAsistenciasResponse().setAsistencias(List.of(asistencia));
+            } else {
+                log.error("Asistencia no encontrada con id: {}", id);
+                response.setMetada("Respuesta FALLIDA", "-1", "Asistencia no encontrada");
+                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            log.error("Error al actualizar asistencia", e);
+            response.setMetada("Respuesta FALLIDA", "-1", "Error al actualizar asistencia");
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        response.setMetada("Respuesta OK", "00", "Asistencia actualizada con éxito");
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+    @Override
+    @Transactional
+    public ResponseEntity<AsistenciasResponseRest> eliminarAsistencia(Long id) {
+        log.info("Inicio metodo eliminarAsistencia");
+
+        AsistenciasResponseRest response = new AsistenciasResponseRest();
+
+        try {
+            Optional<Asistencias> asistenciaExistente = asistenciasDao.findById(id);
+            if (asistenciaExistente.isPresent()) {
+                asistenciasDao.deleteById(id);  // Elimina la asistencia
+
+                response.setMetada("Respuesta OK", "00", "Asistencia eliminada con éxito");
+            } else {
+                log.error("Asistencia no encontrada con id: {}", id);
+                response.setMetada("Respuesta FALLIDA", "-1", "Asistencia no encontrada");
+                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            log.error("Error al eliminar asistencia", e);
+            response.setMetada("Respuesta FALLIDA", "-1", "Error al eliminar asistencia");
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 }

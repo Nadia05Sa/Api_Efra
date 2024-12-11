@@ -36,7 +36,43 @@ public class User implements Serializable {
     )
     private Set<Authority> authorities = new HashSet<>();  // Conjunto de roles asociados al usuario
 
+    public User(String correo, String nombre, String apellido) {
+        this.correo = correo;
+        Nombre = nombre;
+        Apellido = apellido;
+    }
+
+    public User() {
+
+    }
+
     // Getters y Setters
+
+
+    public String getApellido() {
+        return Apellido;
+    }
+
+    public String getCorreo() {
+            return correo;
+    }
+
+    public String getNombre() {
+            return Nombre;
+    }
+
+    public void setApellido(String apellido) {
+        Apellido = apellido;
+    }
+
+    public void setCorreo(String correo) {
+        this.correo = correo;
+    }
+
+    public void setNombre(String nombre) {
+        Nombre = nombre;
+    }
+
     public Long getId() {
         return id;
     }

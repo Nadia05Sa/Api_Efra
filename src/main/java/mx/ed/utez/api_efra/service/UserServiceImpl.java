@@ -115,4 +115,69 @@ public class UserServiceImpl implements UserService{
         response.setMetada("Respuesta ok", "00", "Respuesta exitosa");
         return new ResponseEntity<UserResponseRest>(response, HttpStatus.OK); //devuelve 200
     }
+
+    @Override
+    @Transactional
+    public ResponseEntity<UserResponseRest> actualizarUsuario(Long id, User request) {
+        log.info("Inicio metodo actualizarUsuario");
+
+        UserResponseRest response = new UserResponseRest();
+
+        try {
+            Optional<User> usuarioExistente = userDao.findById(id);
+            if (usuarioExistente.isPresent()) {
+                User usuario = usuarioExistente.get();
+                // Actualiza los campos necesarios
+                usuario.setUsername(request.getUsername());
+                usuario.setPassword(request.getPassword());
+                usuario.setEnabled(request.isEnabled());
+                usuario.setCorreo(request.getCorreo());
+                usuario.setNombre(request.getNombre());
+                usuario.setApellido(request.getApellido());
+
+                // Guardar usuario actualizado
+                userDao.save(usuario);
+
+                response.getUserResponse().setUser(List.of(usuario));
+            } else {
+                log.error("Usuario no encontrado con id: {}", id);
+                response.setMetada("Respuesta FALLIDA", "-1", "Usuario no encontrado");
+                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            log.error("Error al actualizar usuario", e);
+            response.setMetada("Respuesta FALLIDA", "-1", "Error al actualizar usuario");
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        response.setMetada("Respuesta OK", "00", "Usuario actualizado con éxito");
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+    @Override
+    @Transactional
+    public ResponseEntity<UserResponseRest> eliminarUsuario(Long id) {
+        log.info("Inicio metodo eliminarUsuario");
+
+        UserResponseRest response = new UserResponseRest();
+
+        try {
+            Optional<User> usuarioExistente = userDao.findById(id);
+            if (usuarioExistente.isPresent()) {
+                userDao.deleteById(id);  // Elimina el usuario
+
+                response.setMetada("Respuesta OK", "00", "Usuario eliminado con éxito");
+            } else {
+                log.error("Usuario no encontrado con id: {}", id);
+                response.setMetada("Respuesta FALLIDA", "-1", "Usuario no encontrado");
+                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            log.error("Error al eliminar usuario", e);
+            response.setMetada("Respuesta FALLIDA", "-1", "Error al eliminar usuario");
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
 }

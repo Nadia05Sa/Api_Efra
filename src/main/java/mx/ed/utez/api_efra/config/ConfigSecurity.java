@@ -15,6 +15,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -25,7 +26,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-
+import mx.ed.utez.api_efra.filter.JwtReqFilter;
 @Configuration // Indica que esta clase es una configuración de Spring.
 public class ConfigSecurity {
 
@@ -52,28 +53,28 @@ public class ConfigSecurity {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(configure -> configure
-// Se configuran las reglas de autorización para las rutas según el método HTT
-                                .requestMatchers(HttpMethod.POST, "/v1/authenticate").permitAll()
+                        // Configuración de permisos para las rutas
+                        .requestMatchers(HttpMethod.GET, "/v1/asistencia/**").permitAll() // Solo ADMIN puede acceder a /v1/admin/**
+                        .requestMatchers(HttpMethod.GET, "/v1/usuarios/**").hasAnyRole("USER", "ADMIN") // USER y ADMIN pueden acceder a /v1/user/**
+                        .requestMatchers(HttpMethod.POST, "/v1/authenticate").permitAll() // Todos pueden acceder a /v1/authenticate
+                        .anyRequest().authenticated() // Todas las demás solicitudes requieren autenticación
                 )
-// Configuración de CORS para permitir solicitudes desde un origen específico
                 .cors(cors -> cors.configurationSource(request -> {
                     var config = new CorsConfiguration();
-                    config.setAllowedOrigins(List.of("http://localhost:63342", "http://127.0.0.1:9090")); // Orígenes permitidos
-                    config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS")); // Métodos permitidos
-                    config.setAllowCredentials(true); // Permite credenciales
-                    config.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Requested-With")); // Encabezados permitidos
-                    config.setExposedHeaders(List.of("Authorization")); // Encabezados expuestos al cliente
+                    config.setAllowedOrigins(List.of("http://localhost:63342", "http://127.0.0.1:9090"));
+                    config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+                    config.setAllowCredentials(true);
+                    config.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Requested-With"));
+                    config.setExposedHeaders(List.of("Authorization"));
                     return config;
                 }))
-                // Deshabilitar CSRF (Cross-Site Request Forgery) porque la aplicación probablemente está utilizando JWT
-                .csrf(csrf -> csrf.disable())
-                // Configuración para que la aplicación no mantenga sesiones (stateless), ya que se usa JWT para autenticación
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                // Añadir el filtro JWT antes del filtro de autenticación por nombre de usuario y contraseña
-                .addFilterBefore(jwtReqFilter, UsernamePasswordAuthenticationFilter.class);
+                .csrf(csrf -> csrf.disable()) // Deshabilitar CSRF
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Sin estado (stateless)
+                .addFilterBefore(jwtReqFilter, UsernamePasswordAuthenticationFilter.class); // Filtro JWT
 
-        return http.build(); // Construir la configuración de seguridad
+        return http.build(); // Construir la configuración
     }
+
 
     // Bean que proporciona un AuthenticationManager para la autenticación de usuarios
     @Bean
@@ -81,10 +82,8 @@ public class ConfigSecurity {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
-    @Bean
     public PasswordEncoder passwordEncoder() {
-        return NoOpPasswordEncoder.getInstance(); // Contraseñas sin encriptar
+        return new BCryptPasswordEncoder();
     }
-
 
 }
